@@ -31,6 +31,7 @@
             100% { transform: translate(0, 0); }
         }
 
+        /* Snowflake Style */
         .snowflake {
             position: absolute;
             background: white;
@@ -46,6 +47,7 @@
             100% { transform: translateY(100vh); opacity: 0; }
         }
 
+        /* Shake Effect */
         .shake {
             animation: shake 0.3s ease;
         }
@@ -58,66 +60,56 @@
             100% { transform: translate(0px, 0px); }
         }
 
+        /* Flash Effect */
         .flash {
             background-color: white;
         }
 
-        /* Interaction Overlay */
-        #overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.85);
-            color: white;
-            font-size: 2rem;
-            z-index: 10;
+        /* Start Button */
+        #startButton {
+            padding: 20px 40px;
+            background-color: white;
+            color: black;
+            border: none;
+            font-size: 20px;
             cursor: pointer;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
 
     <h1>Obsidian.Press</h1>
-    <audio id="audio" loop>
-        <source src="edge.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    <button id="startButton">Start</button>
 
-    <!-- User Interaction Overlay (Hidden by Default) -->
-    <div id="overlay">Tap to Start the Experience</div>
+    <!-- Audio for the song -->
+    <audio id="audio" src="edge.mp3" type="audio/mpeg"></audio>
 
     <script>
-        // Create Snowflakes
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.classList.add('snowflake');
-            snowflake.style.left = Math.random() * window.innerWidth + 'px';
-            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Duration between 2s and 5s
-            snowflake.style.opacity = Math.random();
-            snowflake.style.width = Math.random() * 8 + 'px'; // Random size
-            snowflake.style.height = snowflake.style.width;
-
-            document.body.appendChild(snowflake);
-
-            setTimeout(() => snowflake.remove(), 5000); // Remove after falling
-        }
-
-        setInterval(createSnowflake, 100);
-
-        // Web Audio API for beat detection
         const audioElement = document.getElementById('audio');
-        const overlay = document.getElementById('overlay');
+        const startButton = document.getElementById('startButton');
         let audioContext;
         let analyser;
         let bufferLength;
         let dataArray;
 
-        // Function to initialize audio context and analyser
+        // Create Snowflakes
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.style.left = Math.random() * window.innerWidth + 'px';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2s to 5s duration
+            snowflake.style.opacity = Math.random();
+            snowflake.style.width = Math.random() * 8 + 'px'; // Random size
+            snowflake.style.height = snowflake.style.width;
+
+            document.body.appendChild(snowflake);
+            setTimeout(() => snowflake.remove(), 5000); // Remove after falling
+        }
+
+        setInterval(createSnowflake, 100); // Create snowflake every 100ms
+
+        // Initialize Web Audio API and Beat Detection
         function initializeAudio() {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const audioSource = audioContext.createMediaElementSource(audioElement);
@@ -129,7 +121,7 @@
             analyser.connect(audioContext.destination);
         }
 
-        // Detect beats and trigger visual effects
+        // Detect Beat and Trigger Effects
         function detectBeat() {
             analyser.getByteFrequencyData(dataArray);
             const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
@@ -150,23 +142,15 @@
             setTimeout(() => document.body.classList.remove('shake'), 300);
         }
 
-        // Play audio on interaction
-        function startAudio() {
-            overlay.style.display = 'none';
+        // Start Button Event Listener
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none'; // Hide button once clicked
             initializeAudio();
             audioElement.play().then(() => {
-                detectBeat(); // Start beat detection after audio plays
+                detectBeat(); // Start detecting beats
             }).catch((error) => {
-                console.error('Audio playback failed:', error);
+                console.error("Error playing audio:", error);
             });
-        }
-
-        // Add click event listener to overlay for starting audio
-        overlay.addEventListener('click', startAudio);
-
-        // Attempt to start the audio as soon as the page loads
-        window.addEventListener('DOMContentLoaded', () => {
-            startAudio(); // Try autoplay without interaction
         });
     </script>
 
