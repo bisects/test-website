@@ -134,10 +134,17 @@
             requestAnimationFrame(detectBeat);
         }
 
-        // Shake and Flash Effects
+        // Shake and Flash Effects with Color Changes
         function triggerEffects() {
+            // Random Color for Flashing Effect
+            const randomColor = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`;
+            document.body.style.backgroundColor = randomColor;
+
+            // Flash effect
             document.body.classList.add('flash');
             setTimeout(() => document.body.classList.remove('flash'), 100);
+
+            // Shake effect
             document.body.classList.add('shake');
             setTimeout(() => document.body.classList.remove('shake'), 300);
         }
