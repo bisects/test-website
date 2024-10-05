@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian.Press</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+
+        h1 {
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-size: 4rem;
+            position: absolute;
+            animation: floatText 5s ease-in-out infinite;
+        }
+
+        @keyframes floatText {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Snowflake Style */
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0); opacity: 0.8; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Obsidian.Press</h1>
+
+    <!-- Audio for the song -->
+    <audio controls autoplay loop>
+        <source src="/media/edge.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        // Create Snowflakes
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.style.left = Math.random() * window.innerWidth + 'px';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Duration between 2s and 5s
+            snowflake.style.opacity = Math.random();
+            snowflake.style.width = Math.random() * 8 + 'px'; // Random size
+            snowflake.style.height = snowflake.style.width;
+
+            document.body.appendChild(snowflake);
+
+            // Remove snowflake after falling
+            setTimeout(() => {
+                snowflake.remove();
+            }, 5000);
+        }
+
+        setInterval(createSnowflake, 100); // Creates a snowflake every 100ms
+    </script>
+
+</body>
+</html>
