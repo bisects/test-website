@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsidian.Press</title>
+    <title>Obsidian.Press Visualizer</title>
     <style>
         body {
             margin: 0;
@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             background-color: black;
+            transition: background-color 0.1s ease;
         }
 
         h1 {
@@ -45,6 +46,24 @@
             0% { transform: translateY(0); opacity: 0.8; }
             100% { transform: translateY(100vh); opacity: 0; }
         }
+
+        /* Screen shake */
+        .shake {
+            animation: shake 0.3s ease;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0px, 0px); }
+            25% { transform: translate(10px, -10px); }
+            50% { transform: translate(-10px, 10px); }
+            75% { transform: translate(10px, 10px); }
+            100% { transform: translate(0px, 0px); }
+        }
+
+        /* Flashing lights */
+        .flash {
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +71,7 @@
     <h1>Obsidian.Press</h1>
 
     <!-- Audio for the song -->
-    <audio controls autoplay loop>
+    <audio id="audio" controls autoplay loop>
         <source src="/media/edge.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -77,6 +96,43 @@
         }
 
         setInterval(createSnowflake, 100); // Creates a snowflake every 100ms
+
+        // Web Audio API for beat detection
+        const audioElement = document.getElementById('audio');
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioSource = audioContext.createMediaElementSource(audioElement);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        audioSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        function detectBeat() {
+            analyser.getByteFrequencyData(dataArray);
+            const average = dataArray.reduce((sum, value) => sum + value, 0) / bufferLength;
+
+            // Adjust threshold as needed
+            const beatThreshold = 160;
+            if (average > beatThreshold) {
+                triggerEffects();
+            }
+
+            requestAnimationFrame(detectBeat);
+        }
+
+        function triggerEffects() {
+            // Flashing effect
+            document.body.classList.add('flash');
+            setTimeout(() => document.body.classList.remove('flash'), 100);
+
+            // Shake effect
+            document.body.classList.add('shake');
+            setTimeout(() => document.body.classList.remove('shake'), 300);
+        }
+
+        detectBeat();
     </script>
 
 </body>
